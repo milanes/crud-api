@@ -5,7 +5,7 @@ WORKDIR /home/nodejs/app
 ENV NODE_ENV prod
 COPY package*.json ./
 RUN npm install --only=production
-ARG port=80
+ARG port=8080
 EXPOSE $port
 COPY . ./
 CMD /wait && node index.js

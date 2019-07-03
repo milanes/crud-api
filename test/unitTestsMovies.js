@@ -17,7 +17,7 @@ describe("API Integration Test", () => {
     test("/api/movies/new", assert => {
       request(app)
         .post("/api/movies/new")
-        .send(new Movie("test title", "test user", "test body"))
+        .send(new Movie("test title", "test year", "test author", "test body"))
         .expect(200)
         .end((err, res) => {
           if (err) return assert.fail(JSON.stringify(res));
@@ -32,13 +32,13 @@ describe("API Integration Test", () => {
         .expect(200)
         .end((err, res) => {
           if (err) return assert.fail(JSON.stringify(res));
-          documentId = res.body[0]._id;
+          movieId = res.body[0]._id;
           assert.pass("Got all movies successfully, test passed!");
           assert.end();
         });
     });
 
-    test("/api/documents/:id", assert => {
+    test("/api/movies/:id", assert => {
       request(app)
         .get(`/api/movies/${movieId}`)
         .expect(200)
@@ -49,11 +49,16 @@ describe("API Integration Test", () => {
         });
     });
 
-    test("/api/documents/edit/:id", assert => {
+    test("/api/movies/edit/:id", assert => {
       request(app)
-        .patch(`/api/documents/edit/${movieId}`)
+        .patch(`/api/movies/edit/${movieId}`)
         .send(
-          new Document("test title edit", "test user edit", "test body edit")
+          new Movie(
+            "test title edit",
+            "test year edit",
+            "test author edit",
+            "test body edit"
+          )
         )
         .expect(200)
         .end((err, res) => {
@@ -63,7 +68,7 @@ describe("API Integration Test", () => {
         });
     });
 
-    test("/api/documents/delete/:id", assert => {
+    test("/api/movies/delete/:id", assert => {
       request(app)
         .delete(`/api/movies/delete/${movieId}`)
         .expect(200)
