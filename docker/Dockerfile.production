@@ -1,0 +1,23 @@
+# Comenzamos basando nuestro contenedor en la node:10.12.0-alpineimagen. 
+# La primera capa después de eso descarga un script que esperará a que se inicien 
+# servicios arbitrarios para que los servicios no se pongan en línea sin sus dependencias 
+# y lo hagamos ejecutable con chmod +x. Después de eso establecemos nuestro directorio de trabajo. 
+# A continuación, le informamos a nuestra aplicación que estamos en producción asignando la variable 
+# de entorno NODE_ENV(en nuestro servidor solo verificamos si NODE_ENV === 'dev'es posible que queramos 
+# verificar explícitamente 'prod'más adelante). Antes de copiar otros archivos, copiamos package.json instalamos 
+# nuestras dependencias para que Docker pueda almacenarlas en caché para las compilaciones posteriores. 
+# A continuación obtenemos nuestro puerto ARG desde docker-compose.yml  y .env para exponer eso a la red interna de Docker. 
+# Sucediendo que copiemos todos nuestros archivos. Finalmente, ejecutamos nuestro script para esperar a que 
+# MongoDB se conecte y luego ejecutamos nuestro servidor.
+
+FROM node:10.12.0-alpine
+ADD https://github.com/ufoscout/docker-compose-wait/releases/download/2.2.1/wait /wait
+RUN chmod +x /wait
+WORKDIR /home/nodejs/app
+ENV NODE_ENV prod
+COPY package*.json ./
+RUN npm install --only=production
+ARG port=80
+EXPOSE $port
+COPY . ./
+CMD /wait && node index.js

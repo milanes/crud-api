@@ -1,0 +1,29 @@
+# Estamos utilizando la versión 3.0de docker-compose.yml
+# Nuestra sección principal es services y consiste en nuestro
+# Node.js / Express.js backend y nuestro MongoDB database.
+# En el backend nos encontramos primeramente con "build",
+# debemos establecer la ruta de nuestro archivo en Docker/
+version: "3"
+services:
+  backend:
+    build:
+      context: ../
+      dockerfile: docker/Dockerfile.production
+      args:
+        port: ${PORT}
+    env_file:
+      - ../.env
+    restart: always
+    ports:
+      - "${PORT}:${PORT}"
+    environment:
+      WAIT_HOSTS: database:27017
+  database:
+    image: mongo:4.0
+    env_file:
+      - ../.env
+    volumes:
+      - ".${MONGO_DATA_DIR}:${MONGO_DATA_DIR}"
+    expose:
+      - 27017
+    command: "mongod --smallfiles --logpath=${MONGO_LOG_FILE}"
