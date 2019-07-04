@@ -2,7 +2,7 @@
 
 [![Build Status](https://travis-ci.org/milanes/crud-api.svg?branch=master)](https://travis-ci.org/milanes/crud-api)
 
-### For test my project you need run ==>
+### If you want try my project, clone the git and run the following code ==>
 
 ### Build: 
 `npm run build`
