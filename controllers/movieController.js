@@ -1,7 +1,7 @@
 const Movie = require("../models/Movies");
 
 // List all movies from MongoDB database
-exports.movies_list = function(req, res, next) {
+exports.moviesList = function(req, res, next) {
   req.app.locals.db
     .collection("movies")
     .find({})
@@ -18,7 +18,7 @@ exports.movies_list = function(req, res, next) {
 };
 
 // Select a movie by id from database
-exports.movie_details = function(req, res, next) {
+exports.movieDetails = function(req, res, next) {
   req.app.locals.db.collection("movies").findOne(
     {
       _id: req.params.id
@@ -27,7 +27,7 @@ exports.movie_details = function(req, res, next) {
       if (err) {
         res.status(400).send({ error: err });
       }
-      if (result === undefined) {
+      if (result) {
         res.status(400).send({ error: "No movie matching that id was found" });
       } else {
         res.status(200).send(result);
@@ -37,28 +37,21 @@ exports.movie_details = function(req, res, next) {
 };
 
 // Add a new movie to database
-exports.movie_add = function(req, res, next) {
-  const newMovie = new Movie(
-    req.body.title,
-    req.body.year,
-    req.body.author,
-    req.body.body
-  );
-  req.app.locals.db.collection("movies").insertOne(
-    {
-      newMovie
-    },
-    (err, result) => {
+exports.movieAdd = function(req, res, next) {
+  const { title, year, author, body } = req.body;
+  const newMovie = new Movie(title, year, author, body);
+  req.app.locals.db
+    .collection("movies")
+    .insertOne({ newMovie }, (err, result) => {
       if (err) {
         res.status(400).send({ error: err });
       }
       res.status(200).send(result);
-    }
-  );
+    });
 };
 
 // Delete a movie from database
-exports.movies_delete = function(req, res, next) {
+exports.moviesDelete = function(req, res, next) {
   req.app.locals.db.collection("movies").deleteOne(
     {
       _id: req.params.id
@@ -73,7 +66,7 @@ exports.movies_delete = function(req, res, next) {
 };
 
 // Update the info of a movie based in the id
-exports.movie_update = function(req, res, next) {
+exports.movieUpdate = function(req, res, next) {
   req.app.locals.db.collection("movies").updateOne(
     {
       _id: req.params.id
